@@ -76,9 +76,9 @@ const game = new Phaser.Game(config);
 const car_speed = 2;
 const car_rotation = 2;
 
-let player1_angle = 0;
-let player2_angle = 0;
-let player3_angle = 0;
+let player1_angle = -1.5;
+let player2_angle = -1.5;
+let player3_angle = -1.5;
 
 let car_move;
 
@@ -88,13 +88,27 @@ function preload ()
 	this.load.image('car2', 'assets/PNG/Cars/car_blue_small_1.png');
 	this.load.image('car3', 'assets/PNG/Cars/car_red_small_1.png');
 
+	this.load.image('track', 'assets/PNG/Track/track.png');
+
+	this.load.image('bullet', 'assets/PNG/Bullet/bullet.png');
+
 }
 
 function create ()
 {
-	player1 = this.add.image(400, 555, 'car1');
-	player2 = this.add.image(500, 555, 'car2');
-	player3 = this.add.image(300, 555, 'car3');
+	track = this.add.image(400, 300, 'track').setDisplaySize(800,600);
+
+	bullet = this.add.image(400, 300, 'bullet');
+
+	player1 = this.add.image(272, 508, 'car1');
+	player2 = this.add.image(272, 554, 'car2');
+	player3 = this.add.image(272, 544, 'car3');
+
+	player1.setScale(0.5);
+	player2.setScale(0.5);
+	player3.setScale(0.5);
+
+	bullet.setScale(0.01);
 
 	car_move = this.input.keyboard.createCursorKeys();
 
