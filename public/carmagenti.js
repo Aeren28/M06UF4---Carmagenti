@@ -4,6 +4,12 @@ let player1;
 let player2;
 let player3;
 
+let bullet;
+let enemyBullet;
+let canShoot = true;
+
+const bullet_speed = 3;
+
 const socket = new WebSocket("ws://10.40.1.101:8080");
 
 socket.addEventListener("open", function(event){
@@ -57,6 +63,18 @@ socket.addEventListener("message", function(event){
 			}
 		}
 	}
+	else if(data.bx != undefined){
+		if(enemyBullet == undefined){
+
+			enemyBullet = global_game.add.image(data.bx, data.by, "bullet");
+			enemyBullet.setScale(0.01);
+			enemyBullet.rotation = data.br;
+		}
+
+		enemyBullet.y -= bullet_speed * Math.cos(enemyBullet.rotation);
+		enemyBullet.x += bullet_speed * Math.sin(enemyBullet.rotation);
+
+	}
 
 });
 
@@ -81,6 +99,7 @@ let player2_angle = -1.5;
 let player3_angle = -1.5;
 
 let car_move;
+let bullet_shoot;
 
 function preload ()
 {
@@ -98,8 +117,6 @@ function create ()
 {
 	track = this.add.image(400, 300, 'track').setDisplaySize(800,600);
 
-	bullet = this.add.image(400, 300, 'bullet');
-
 	player1 = this.add.image(272, 508, 'car1');
 	player2 = this.add.image(272, 554, 'car2');
 	player3 = this.add.image(272, 544, 'car3');
@@ -108,9 +125,8 @@ function create ()
 	player2.setScale(0.5);
 	player3.setScale(0.5);
 
-	bullet.setScale(0.01);
-
 	car_move = this.input.keyboard.createCursorKeys();
+	bullet_shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
 }
 
@@ -138,9 +154,20 @@ function update ()
 			player1_angle += car_rotation;
 		}
 
+		if (bullet_shoot.isDown && canShoot) {
+            bullet = this.add.image(
+                player1.x + (2 * player1.width / 3)* Math.sin(player1_angle * Math.PI / 180),
+                player1.y - (2 * player1.width / 3) * Math.cos(player1_angle * Math.PI / 180),
+                "bullet"
+            );
+            bullet.setScale(0.01);
+            bullet.rotation = player1_angle * Math.PI / 180;
+            canShoot = false;
+        }
+
 		player1.rotation = player1_angle*Math.PI/180;
 
- 		 var player_data = {
+ 		 let player_data = {
 			n: player_num,
 			x: player1.x,
 			y: player1.y,
@@ -169,9 +196,20 @@ function update ()
 			player2_angle += car_rotation;
 		}
 
+		if (bullet_shoot.isDown && canShoot) {
+            bullet = this.add.image(
+                player2.x + (2 * player2.width / 3)* Math.sin(player2_angle * Math.PI / 180),
+                player2.y - (2 * player2.width / 3) * Math.cos(player2_angle * Math.PI / 180),
+                "bullet"
+            );
+            bullet.setScale(0.01);
+            bullet.rotation = player2_angle * Math.PI / 180;
+            canShoot = false;
+        }
+
 		player2.rotation = player2_angle*Math.PI/180;
 
- 		 var player_data = {
+ 		 let player_data = {
 			n: player_num,
 			x: player2.x,
 			y: player2.y,
@@ -200,9 +238,21 @@ function update ()
 			player3_angle += car_rotation;
 		}
 
+		if (bullet_shoot.isDown && canShoot) {
+            bullet = this.add.image(
+                player3.x + (2 * player3.width / 3)* Math.sin(player3_angle * Math.PI / 180),
+                player3.y - (2 * player3.width / 3) * Math.cos(player3_angle * Math.PI / 180),
+                "bullet"
+            );
+
+            bullet.setScale(0.01);
+            bullet.rotation = player3_angle * Math.PI / 180;
+            canShoot = false;
+        }
+
 		player3.rotation = player3_angle*Math.PI/180;
 
- 		 var player_data = {
+ 		 let player_data = {
 			n: player_num,
 			x: player3.x,
 			y: player3.y,
@@ -212,6 +262,21 @@ function update ()
  		socket.send(JSON.stringify(player_data));
 
 	}
+
+	if (bullet == undefined || canShoot) {
+        return;
+    }
+
+    bullet.y -= bullet_speed * Math.cos(bullet.rotation);
+    bullet.x += bullet_speed * Math.sin(bullet.rotation);
+
+    let bullet_data = {
+        bx: bullet.x,
+        by: bullet.y,
+        br: bullet.rotation
+    }
+
+    socket.send(JSON.stringify(bullet_data));
 
 }
 
