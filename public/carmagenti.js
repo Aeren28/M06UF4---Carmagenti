@@ -118,12 +118,16 @@ function create ()
 	track = this.add.image(400, 300, 'track').setDisplaySize(800,600);
 
 	player1 = this.add.image(272, 508, 'car1');
-	player2 = this.add.image(272, 554, 'car2');
-	player3 = this.add.image(272, 544, 'car3');
+	player2 = this.add.image(272, 544, 'car2');
+	player3 = this.add.image(272, 574, 'car3');
 
 	player1.setScale(0.5);
 	player2.setScale(0.5);
 	player3.setScale(0.5);
+
+	player1.setAngle(-90);
+	player2.setAngle(-90);
+	player3.setAngle(-90);
 
 	car_move = this.input.keyboard.createCursorKeys();
 	bullet_shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
