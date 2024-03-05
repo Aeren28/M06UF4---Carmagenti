@@ -64,16 +64,122 @@ socket.addEventListener("message", function(event){
 		}
 	}
 	else if(data.bx != undefined){
-		if(enemyBullet == undefined){
+		if(player_num == 2){
+			if(bullet == undefined){
+				bullet = global_game.add.image(player1.x + (2 * player1.width / 3) * Math.sin(player1_angle * Math.PI / 180), player1.y + (2 * player1.width / 3) * Math.sin(player1_angle * Math.PI / 180), 'bullet');
 
-			enemyBullet = global_game.add.image(data.bx, data.by, "bullet");
-			enemyBullet.setScale(0.01);
-			enemyBullet.rotation = data.br;
+                bullet.setScale(0.01);
+
+                global_game.physics.add.collider(player2, bullet, () => {
+                    console.log("Hit with Player 2");
+
+                    let bullet_collision_data = {
+                        collided: 2
+                    }
+                
+                    socket.send(JSON.stringify(bullet_collision_data));
+                });
+                global_game.physics.add.existing(bullet, false);
+			}
+			else if(bullet == undefined){
+				bullet = global_game.add.image(player3.x + (2 * player3.width / 3) * Math.sin(player3_angle * Math.PI / 180), player3.y + (2 * player3.width / 3) * Math.sin(player3_angle * Math.PI / 180), 'bullet');
+
+                bullet.setScale(0.01);
+
+                global_game.physics.add.collider(player2, bullet, () => {
+                    console.log("Hit with Player 2");
+
+                    let bullet_collision_data = {
+                        collided: 2
+                    }
+                
+                    socket.send(JSON.stringify(bullet_collision_data));
+                });
+                global_game.physics.add.existing(bullet, false);
+			}
+
+			bullet.x = data.bx;
+			bullet.y = data.by;
+			bullet.rotation = data.br;
+		}
+		else if(player_num == 1){
+			if(bullet == undefined){
+				bullet = global_game.add.image(player2.x + (2 * player2.width / 3) * Math.sin(player2_angle * Math.PI / 180), player2.y + (2 * player2.width / 3) * Math.sin(player2_angle * Math.PI / 180), 'bullet');
+
+                bullet.setScale(0.01);
+
+                global_game.physics.add.collider(player1, bullet, () => {
+                    console.log("Hit with Player 1");
+
+                    let bullet_collision_data = {
+                        collided: 1
+                    }
+                
+                    socket.send(JSON.stringify(bullet_collision_data));
+                });
+                global_game.physics.add.existing(bullet, false);
+			}
+			else if(bullet == undefined){
+				bullet = global_game.add.image(player3.x + (2 * player3.width / 3) * Math.sin(player3_angle * Math.PI / 180), player3.y + (2 * player3.width / 3) * Math.sin(player3_angle * Math.PI / 180), 'bullet');
+
+                bullet.setScale(0.01);
+
+                global_game.physics.add.collider(player2, bullet, () => {
+                    console.log("Hit with Player 2");
+
+                    let bullet_collision_data = {
+                        collided: 2
+                    }
+                
+                    socket.send(JSON.stringify(bullet_collision_data));
+                });
+                global_game.physics.add.existing(bullet, false);
+			}
+
+			bullet.x = data.bx;
+			bullet.y = data.by;
+			bullet.rotation = data.br;
+		}	
+	}
+
+	if(player_num == 3){
+		if(bullet == undefined){
+			bullet = global_game.add.image(player2.x + (2 * player2.width / 3) * Math.sin(player2_angle * Math.PI / 180), player2.y + (2 * player2.width / 3) * Math.sin(player2_angle * Math.PI / 180), 'bullet');
+
+			bullet.setScale(0.01);
+
+			global_game.physics.add.collider(player3, bullet, () => {
+				console.log("Hit with Player 3");
+
+				let bullet_collision_data = {
+					collided: 3
+				}
+			
+				socket.send(JSON.stringify(bullet_collision_data));
+			});
+			global_game.physics.add.existing(bullet, false);
+			
+		}
+		else if(bullet == undefined){
+			bullet = global_game.add.image(player2.x + (2 * player2.width / 3) * Math.sin(player2_angle * Math.PI / 180), player2.y + (2 * player2.width / 3) * Math.sin(player2_angle * Math.PI / 180), 'bullet');
+
+			bullet.setScale(0.01);
+
+			global_game.physics.add.collider(player3, bullet, () => {
+				console.log("Hit with Player 3");
+
+				let bullet_collision_data = {
+					collided: 3
+				}
+			
+				socket.send(JSON.stringify(bullet_collision_data));
+			});
+			global_game.physics.add.existing(bullet, false);
 		}
 
-		enemyBullet.y -= bullet_speed * Math.cos(enemyBullet.rotation);
-		enemyBullet.x += bullet_speed * Math.sin(enemyBullet.rotation);
-
+		bullet.x = data.bx;
+		bullet.y = data.by;
+		bullet.rotation = data.br;
 	}
 
 });
@@ -90,6 +196,8 @@ scene:{
 }
 
 const game = new Phaser.Game(config);
+
+let global_game;
 
 const car_speed = 2;
 const car_rotation = 2;
@@ -179,7 +287,21 @@ function update ()
   		};
 
  		socket.send(JSON.stringify(player_data));
-
+		
+		 if (bullet == undefined || canShoot) {
+			return;
+		}
+	
+		bullet.y -= bullet_speed * Math.cos(bullet.rotation);
+		bullet.x += bullet_speed * Math.sin(bullet.rotation);
+	
+		let bullet_data = {
+			bx: bullet.x,
+			by: bullet.y,
+			br: bullet.rotation
+		}
+	
+		socket.send(JSON.stringify(bullet_data));
 	}
 	else if(player_num == 2){
 		if( car_move.up.isDown){
@@ -221,6 +343,21 @@ function update ()
   		};
 
  		socket.send(JSON.stringify(player_data));
+
+		 if (bullet == undefined || canShoot) {
+			return;
+		}
+	
+		bullet.y -= bullet_speed * Math.cos(bullet.rotation);
+		bullet.x += bullet_speed * Math.sin(bullet.rotation);
+	
+		let bullet_data = {
+			bx: bullet.x,
+			by: bullet.y,
+			br: bullet.rotation
+		}
+	
+		socket.send(JSON.stringify(bullet_data));
 
 	}
 	else if(player_num == 3){
@@ -265,22 +402,22 @@ function update ()
 
  		socket.send(JSON.stringify(player_data));
 
+		 if (bullet == undefined || canShoot) {
+			return;
+		}
+	
+		bullet.y -= bullet_speed * Math.cos(bullet.rotation);
+		bullet.x += bullet_speed * Math.sin(bullet.rotation);
+	
+		let bullet_data = {
+			bx: bullet.x,
+			by: bullet.y,
+			br: bullet.rotation
+		}
+	
+		socket.send(JSON.stringify(bullet_data));
+
 	}
-
-	if (bullet == undefined || canShoot) {
-        return;
-    }
-
-    bullet.y -= bullet_speed * Math.cos(bullet.rotation);
-    bullet.x += bullet_speed * Math.sin(bullet.rotation);
-
-    let bullet_data = {
-        bx: bullet.x,
-        by: bullet.y,
-        br: bullet.rotation
-    }
-
-    socket.send(JSON.stringify(bullet_data));
 
 }
 
