@@ -114,6 +114,11 @@ socket.addEventListener("message", function(event){
         else if (data.gameOver != player_num && player_num <= 2) {
             text = global_game.add.text(config.width / 3, config.height / 2, "YOU WON", {font: '600 36px Impact', color: '#7B00FF'});
         }
+		else {
+            let number;
+            data.gameOver === 1 ? number = 2 : number = 1;
+            text = global_game.add.text(config.width / 3, config.height / 2, "Player " + number + " WON", {font: '600 36px Impact', color: '#0EC9C2'});
+        }
     }
 });
 

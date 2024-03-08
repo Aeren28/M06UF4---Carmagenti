@@ -18,6 +18,9 @@ http_server.listen(8080);
 let p1_conn;
 let p2_conn;
 
+let viewers = [];
+let users_connected = 3;
+
 ws_server.on('connection', function (conn){
 	console.log('EVENT: Connection');
 	
@@ -31,11 +34,19 @@ ws_server.on('connection', function (conn){
 				return;
 			p2_conn.send(data.toString());
 
+			viewers.forEach(viewers =>{
+				viewers.send(data.toString());
+			});
+			
 			let parsed_data = JSON.parse(data);
 			if (parsed_data.collided != undefined && parsed_data.collided === true) {
 				console.log(parsed_data.player + " has died");
 				p1_conn.send('{"gameOver": 1}');
 				p2_conn.send('{"gameOver": 1}');
+
+				viewers.forEach(viewers =>{
+					viewers.send('{"gameOver": 1}');
+				});
 			}
      	});
 	}
@@ -50,12 +61,28 @@ ws_server.on('connection', function (conn){
 				return;
 			p1_conn.send(data.toString());
 
+			viewers.forEach(viewers =>{
+				viewers.send(data.toString());
+			});
+
 			let parsed_data = JSON.parse(data);
 			if (parsed_data.collided != undefined && parsed_data.collided === true) {
 				console.log(parsed_data.player + " has died");
 				p1_conn.send('{"gameOver": 2}');
 				p2_conn.send('{"gameOver": 2}');
+
+				viewers.forEach(viewers =>{
+					viewers.send('{"gameOver": 2}');
+				});
 			}
 		});
+	}
+
+	else{
+		let data = `{"player_num": ${users_connected}}`;
+		conn.send(data);
+		console.log("Viewer Connected");
+		users_connected++;
+		viewers.push(conn);
 	}
 });
