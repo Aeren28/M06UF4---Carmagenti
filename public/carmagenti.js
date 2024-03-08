@@ -50,6 +50,18 @@ socket.addEventListener("message", function(event){
 				player2.rotation = data.r
 			}
 		}
+		else{
+			if (data.n == 1) {
+				player1.x = data.x,
+				player1.y = data.y,
+				player1.rotation = data.r
+			}
+			if (data.n == 2) {
+				player2.x = data.x,
+				player2.y = data.y,
+				player2.rotation = data.r
+			}
+		}
 	}
 	else if(data.bx != undefined){
 		if(data.n === 1){
