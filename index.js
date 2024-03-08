@@ -37,15 +37,15 @@ ws_server.on('connection', function (conn){
 			viewers.forEach(viewers =>{
 				viewers.send(data.toString());
 			});
-			
+
 			let parsed_data = JSON.parse(data);
 			if (parsed_data.collided != undefined && parsed_data.collided === true) {
 				console.log(parsed_data.player + " has died");
-				p1_conn.send('{"gameOver": 1}');
-				p2_conn.send('{"gameOver": 1}');
+				p1_conn.send('{"game_over": 1}');
+				p2_conn.send('{"game_over": 1}');
 
 				viewers.forEach(viewers =>{
-					viewers.send('{"gameOver": 1}');
+					viewers.send('{"game_over": 1}');
 				});
 			}
      	});
@@ -68,11 +68,11 @@ ws_server.on('connection', function (conn){
 			let parsed_data = JSON.parse(data);
 			if (parsed_data.collided != undefined && parsed_data.collided === true) {
 				console.log(parsed_data.player + " has died");
-				p1_conn.send('{"gameOver": 2}');
-				p2_conn.send('{"gameOver": 2}');
+				p1_conn.send('{"game_over": 2}');
+				p2_conn.send('{"game_over": 2}');
 
 				viewers.forEach(viewers =>{
-					viewers.send('{"gameOver": 2}');
+					viewers.send('{"game_over": 2}');
 				});
 			}
 		});

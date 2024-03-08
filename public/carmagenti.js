@@ -116,11 +116,11 @@ socket.addEventListener("message", function(event){
 
 	}
 
-	else if (data.gameOver != undefined) {
+	else if (data.game_over != undefined) {
 
         bg_canvas = global_game.add.rectangle(0, 0, config.width*2, config.height*2, 0x000000);
 
-        if (data.gameOver === player_num) {
+        if (data.game_over === player_num) {
             text = global_game.add.text(config.width / 3, config.height / 2, "YOU LOSE", {font: '600 36px Impact', color: '#8F0000'});
         }
         else if (data.gameOver != player_num && player_num <= 2) {
@@ -128,8 +128,8 @@ socket.addEventListener("message", function(event){
         }
 		else {
             let number;
-            data.gameOver === 1 ? number = 2 : number = 1;
-            text = global_game.add.text(config.width / 3, config.height / 2, "Player " + number + " WON", {font: '600 36px Impact', color: '#0EC9C2'});
+            data.game_over === 1 ? number = 2 : number = 1;
+            text = global_game.add.text(config.width / 3, config.height / 2, "PLAYER " + number + " WON", {font: '600 36px Impact', color: '#0EC9C2'});
         }
     }
 });
