@@ -4,13 +4,14 @@ let player1;
 let player2;
 let player3;
 
-let bullet;
-let enemyBullet;
+let bullet1;
+let bullet2;
+let bullet3
 let canShoot = true;
 
 const bullet_speed = 3;
 
-const socket = new WebSocket("ws://10.40.1.101:8080");
+const socket = new WebSocket("ws://192.168.1.13:8080");
 
 socket.addEventListener("open", function(event){
 });
@@ -64,15 +65,41 @@ socket.addEventListener("message", function(event){
 		}
 	}
 	else if(data.bx != undefined){
-		if(enemyBullet == undefined){
+		if(data.n === 1){
+			console.log("balla1");
+			if(bullet1 == undefined){
 
-			enemyBullet = global_game.add.image(data.bx, data.by, "bullet");
-			enemyBullet.setScale(0.01);
-			enemyBullet.rotation = data.br;
+				bullet1 = global_game.add.image(data.bx, data.by, "bullet");
+				bullet1.setScale(0.01);
+				bullet1.rotation = data.br;
+			}
+			bullet1.y -= bullet_speed * Math.cos(bullet1.rotation);
+			bullet1.x += bullet_speed * Math.sin(bullet1.rotation);
 		}
 
-		enemyBullet.y -= bullet_speed * Math.cos(enemyBullet.rotation);
-		enemyBullet.x += bullet_speed * Math.sin(enemyBullet.rotation);
+		if(data.n === 2){
+			console.log("balla2");
+			if(bullet2 == undefined){
+
+				bullet2 = global_game.add.image(data.bx, data.by, "bullet");
+				bullet2.setScale(0.01);
+				bullet2.rotation = data.br;
+			}
+			bullet2.y -= bullet_speed * Math.cos(bullet2.rotation);
+			bullet2.x += bullet_speed * Math.sin(bullet2.rotation);
+		}
+		
+		if(data.n === 3){
+			console.log("balla3");
+			if(bullet3 == undefined){
+
+				bullet3 = global_game.add.image(data.bx, data.by, "bullet");
+				bullet3.setScale(0.01);
+				bullet3.rotation = data.br;
+			}
+			bullet3.y -= bullet_speed * Math.cos(bullet3.rotation);
+			bullet3.x += bullet_speed * Math.sin(bullet3.rotation);
+		}
 
 	}
 
@@ -90,6 +117,8 @@ scene:{
 }
 
 const game = new Phaser.Game(config);
+
+let global_game;
 
 const car_speed = 2;
 const car_rotation = 2;
@@ -110,6 +139,8 @@ function preload ()
 	this.load.image('track', 'assets/PNG/Track/track.png');
 
 	this.load.image('bullet', 'assets/PNG/Bullet/bullet.png');
+
+	global_game = this;
 
 }
 
@@ -155,13 +186,13 @@ function update ()
 		}
 
 		if (bullet_shoot.isDown && canShoot) {
-            bullet = this.add.image(
+            bullet1 = this.add.image(
                 player1.x + (2 * player1.width / 3)* Math.sin(player1_angle * Math.PI / 180),
                 player1.y - (2 * player1.width / 3) * Math.cos(player1_angle * Math.PI / 180),
                 "bullet"
             );
-            bullet.setScale(0.01);
-            bullet.rotation = player1_angle * Math.PI / 180;
+            bullet1.setScale(0.01);
+            bullet1.rotation = player1_angle * Math.PI / 180;
             canShoot = false;
         }
 
@@ -175,6 +206,22 @@ function update ()
   		};
 
  		socket.send(JSON.stringify(player_data));
+
+		if (bullet1 == undefined || canShoot) {
+			return;
+		}
+	
+		bullet1.y -= bullet_speed * Math.cos(bullet1.rotation);
+		bullet1.x += bullet_speed * Math.sin(bullet1.rotation);
+	
+		let bullet_data = {
+			bx: bullet1.x,
+			by: bullet1.y,
+			br: bullet1.rotation,
+			n: 1
+		}
+	
+		socket.send(JSON.stringify(bullet_data));
 
 	}
 	else if(player_num == 2){
@@ -197,13 +244,13 @@ function update ()
 		}
 
 		if (bullet_shoot.isDown && canShoot) {
-            bullet = this.add.image(
+            bullet2 = this.add.image(
                 player2.x + (2 * player2.width / 3)* Math.sin(player2_angle * Math.PI / 180),
                 player2.y - (2 * player2.width / 3) * Math.cos(player2_angle * Math.PI / 180),
                 "bullet"
             );
-            bullet.setScale(0.01);
-            bullet.rotation = player2_angle * Math.PI / 180;
+            bullet2.setScale(0.01);
+            bullet2.rotation = player2_angle * Math.PI / 180;
             canShoot = false;
         }
 
@@ -216,7 +263,24 @@ function update ()
 			r: player2.rotation
   		};
 
- 		socket.send(JSON.stringify(player_data));
+		socket.send(JSON.stringify(player_data));
+
+		if (bullet2 == undefined || canShoot) {
+			return;
+		}
+	
+		bullet2.y -= bullet_speed * Math.cos(bullet2.rotation);
+		bullet2.x += bullet_speed * Math.sin(bullet2.rotation);
+	
+		let bullet_data = {
+			bx: bullet2.x,
+			by: bullet2.y,
+			br: bullet2.rotation,
+			n: 2
+		}
+	
+		socket.send(JSON.stringify(bullet_data));
+
 
 	}
 	else if(player_num == 3){
@@ -239,14 +303,14 @@ function update ()
 		}
 
 		if (bullet_shoot.isDown && canShoot) {
-            bullet = this.add.image(
+            bullet3 = this.add.image(
                 player3.x + (2 * player3.width / 3)* Math.sin(player3_angle * Math.PI / 180),
                 player3.y - (2 * player3.width / 3) * Math.cos(player3_angle * Math.PI / 180),
                 "bullet"
             );
 
-            bullet.setScale(0.01);
-            bullet.rotation = player3_angle * Math.PI / 180;
+            bullet3.setScale(0.01);
+            bullet3.rotation = player3_angle * Math.PI / 180;
             canShoot = false;
         }
 
@@ -258,25 +322,26 @@ function update ()
 			y: player3.y,
 			r: player3.rotation
   		};
+		
+		socket.send(JSON.stringify(player_data));
 
- 		socket.send(JSON.stringify(player_data));
+		if (bullet3 == undefined || canShoot) {
+			return;
+		}
+	
+		bullet3.y -= bullet_speed * Math.cos(bullet3.rotation);
+		bullet3.x += bullet_speed * Math.sin(bullet3.rotation);
+	
+		let bullet_data = {
+			bx: bullet3.x,
+			by: bullet3.y,
+			br: bullet3.rotation,
+			n: 3
+		}
+	
+		socket.send(JSON.stringify(bullet_data));
 
 	}
-
-	if (bullet == undefined || canShoot) {
-        return;
-    }
-
-    bullet.y -= bullet_speed * Math.cos(bullet.rotation);
-    bullet.x += bullet_speed * Math.sin(bullet.rotation);
-
-    let bullet_data = {
-        bx: bullet.x,
-        by: bullet.y,
-        br: bullet.rotation
-    }
-
-    socket.send(JSON.stringify(bullet_data));
 
 }
 
