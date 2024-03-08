@@ -1,3 +1,15 @@
+const config = {
+	type: Phaser.AUTO,
+	width: 800,
+	height: 600,
+	physics: {default:'arcade'},
+	scene:{
+		preload: preload,
+		create: create,
+		update: update
+	  }
+	}
+
 let player_num = 0;
 
 let player1;
@@ -55,7 +67,7 @@ socket.addEventListener("message", function(event){
                         player: 2,
                         collided: true
                     };
-					
+
                     socket.send(JSON.stringify(collided));
                 });
 
@@ -91,23 +103,26 @@ socket.addEventListener("message", function(event){
 		}
 
 	}
-});
 
-const config = {
-type: Phaser.AUTO,
-width: 800,
-height: 600,
-physics: {default:'arcade'},
-scene:{
-	preload: preload,
-	create: create,
-	update: update
-  }
-}
+	else if (data.gameOver != undefined) {
+
+        bg_canvas = global_game.add.rectangle(0, 0, config.width*2, config.height*2, 0x000000);
+
+        if (data.gameOver === player_num) {
+            text = global_game.add.text(config.width / 3, config.height / 2, "YOU LOSE", {font: '600 36px Impact', color: '#8F0000'});
+        }
+        else if (data.gameOver != player_num && player_num <= 2) {
+            text = global_game.add.text(config.width / 3, config.height / 2, "YOU WON", {font: '600 36px Impact', color: '#7B00FF'});
+        }
+    }
+});
 
 const game = new Phaser.Game(config);
 
 let global_game;
+
+let bg_canvas;
+let text;
 
 const car_speed = 2;
 const car_rotation = 2;

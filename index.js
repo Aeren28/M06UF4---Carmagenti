@@ -33,9 +33,9 @@ ws_server.on('connection', function (conn){
 
 			let parsed_data = JSON.parse(data);
 			if (parsed_data.collided != undefined && parsed_data.collided === true) {
-				console.log(parsed_data.player + "has died");
-				p1_conn.send('{"Game Over": ' + parsed_data.player + '}');
-				p2_conn.send('{"Game Over": ' + parsed_data.player + '}');
+				console.log(parsed_data.player + " has died");
+				p1_conn.send('{"gameOver": 1}');
+				p2_conn.send('{"gameOver": 1}');
 			}
      	});
 	}
@@ -52,9 +52,9 @@ ws_server.on('connection', function (conn){
 
 			let parsed_data = JSON.parse(data);
 			if (parsed_data.collided != undefined && parsed_data.collided === true) {
-				console.log(parsed_data.player + "has died");
-				p1_conn.send('{"Game Over": ' + parsed_data.player + '}');
-				p2_conn.send('{"Game Over": ' + parsed_data.player + '}');
+				console.log(parsed_data.player + " has died");
+				p1_conn.send('{"gameOver": 2}');
+				p2_conn.send('{"gameOver": 2}');
 			}
 		});
 	}
